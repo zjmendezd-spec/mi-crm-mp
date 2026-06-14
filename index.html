@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Smart Point 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css">
+<style>
+:root{--blue:#009ee3;--blue-dark:#0077b6;--blue-light:#e6f6fd;--green:#00a650;--green-light:#e6f9f0;--amber:#f5a623;--amber-light:#fff8e6;--red:#e53935;--red-light:#ffeaea;--gray:#f7f7f5;--gray-2:#efefed;--gray-3:#ddd;--text:#1a1a18;--text-2:#666;--text-3:#999;--white:#fff;--radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(0,0,0,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#f0f0ee;color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+.header{background:var(--white);border-bottom:1px solid var(--gray-3);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+.header-brand{display:flex;align-items:center;gap:10px}
+.header-logo{width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.header-logo svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+.header-title{font-size:15px;font-weight:600}
+.header-sub{font-size:11px;color:var(--text-3);margin-top:1px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--gray-3);display:flex;z-index:100;height:60px}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;color:var(--text-3);cursor:pointer;border:none;background:none;transition:.15s;padding:0;font-family:inherit}
+.nav-item.active{color:var(--blue)}
+.nav-item i{font-size:22px}
+.main{max-width:860px;margin:0 auto;padding:16px 16px 80px}
+.screen{display:none}.screen.active{display:block}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat-pill{background:var(--white);border:1px solid var(--gray-3);border-radius:10px;padding:10px 8px;text-align:center;box-shadow:var(--shadow)}
+.stat-pill-n{font-size:20px;font-weight:600;color:var(--blue)}
+.stat-pill-l{font-size:10px;color:var(--text-3);margin-top:1px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:6px 14px;border:1px solid var(--gray-3);border-radius:20px;font-size:12px;color:var(--text-2);cursor:pointer;background:var(--white);transition:.15s;font-family:inherit}
+.chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pcard{background:var(--white);border:1px solid var(--gray-3);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
+.pcard:hover{border-color:var(--blue)}
+.pcard-top{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.avatar{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px;flex-shrink:0;color:#fff}
+.pcard-info{flex:1;min-width:0}
+.pcard-name{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard-sub{font-size:12px;color:var(--text-2);margin-top:1px}
+.pcard-meta{display:flex;gap:10px;font-size:11px;color:var(--text-3);flex-wrap:wrap}
+.pcard-meta span{display:flex;align-items:center;gap:3px}
+.pcard-meta i{font-size:13px}
+.pipeline-bar{height:3px;background:var(--gray-2);border-radius:2px;overflow:hidden;margin-top:10px}
+.pipeline-fill{height:100%;border-radius:2px;transition:width .3s}
+.pcard-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.contact-btns{display:flex;gap:6px}
+.cbtn{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gray-3);background:var(--white);cursor:pointer;transition:.15s;text-decoration:none;color:var(--text-2);font-size:17px}
+.cbtn.wa{color:#25D366}.cbtn.ig{color:#E1306C}.cbtn.fb{color:#1877F2}.cbtn.em{color:var(--blue)}.cbtn.li{color:#0A66C2}.cbtn.maps{color:#EA4335}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-new{background:var(--blue-light);color:#0077b6}
+.badge-follow{background:var(--amber-light);color:#8a5100}
+.badge-cold{background:var(--gray-2);color:var(--text-2)}
+.badge-hot{background:#fff3e6;color:#cc5500}
+.badge-done{background:var(--green-light);color:#1a6640}
+.exp-hero{background:linear-gradient(135deg,#0077b6 0%,#009ee3 100%);border-radius:var(--radius);padding:20px;margin-bottom:12px;color:#fff}
+.exp-hero-top{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.exp-avatar{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;flex-shrink:0;border:2px solid rgba(255,255,255,.3)}
+.exp-name{font-size:18px;font-weight:700;line-height:1.2}
+.exp-giro{font-size:13px;opacity:.8;margin-top:3px}
+.exp-badge{background:rgba(255,255,255,.2);display:inline-flex;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-top:6px}
+.exp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.exp-stat{background:rgba(255,255,255,.15);border-radius:8px;padding:8px 10px;text-align:center}
+.exp-stat-n{font-size:16px;font-weight:700}
+.exp-stat-l{font-size:10px;opacity:.8;margin-top:2px}
+.exp-section{background:var(--white);border:1px solid var(--gray-3);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.exp-section-title{font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.exp-section-title i{font-size:15px;color:var(--blue)}
+.field-row{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start}
+.field-icon{width:28px;height:28px;background:var(--gray);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;color:var(--text-2)}
+.field-label{font-size:11px;color:var(--text-3);margin-bottom:1px}
+.field-value{font-size:13px;color:var(--text);word-break:break-all}
+.field-value a{color:var(--blue);text-decoration:none}
+.quick-contact{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px}
+.qbtn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px;background:var(--gray);border-radius:10px;cursor:pointer;border:1px solid var(--gray-3);transition:.15s;text-decoration:none;font-family:inherit}
+.qbtn:hover{background:var(--gray-2)}
+.qbtn i{font-size:22px}
+.qbtn span{font-size:10px;color:var(--text-2);font-weight:500}
+.qbtn.wa i{color:#25D366}.qbtn.ig i{color:#E1306C}.qbtn.fb i{color:#1877F2}.qbtn.em i{color:var(--blue)}.qbtn.li i{color:#0A66C2}.qbtn.maps i{color:#EA4335}.qbtn.copy i{color:var(--amber)}
+.msg-types{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+.msg-type-btn{padding:10px 12px;border:1px solid var(--gray-3);border-radius:10px;background:var(--white);cursor:pointer;text-align:left;transition:.15s;font-family:inherit}
+.msg-type-btn:hover,.msg-type-btn.active{border-color:var(--blue);background:var(--blue-light)}
+.msg-type-icon{font-size:20px;margin-bottom:4px}
+.msg-type-name{font-size:13px;font-weight:600}
+.msg-type-desc{font-size:11px;color:var(--text-3);margin-top:2px}
+.msg-output{background:var(--gray);border-radius:10px;padding:14px;font-size:13px;line-height:1.7;min-height:100px;white-space:pre-wrap;border:1px solid var(--gray-3)}
+.msg-output.placeholder{color:var(--text-3);font-style:italic}
+.msg-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.tl-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-2)}
+.tl-item:last-child{border-bottom:none}
+.tl-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.tl-dot-sent{background:var(--blue)}.tl-dot-reply{background:var(--green)}.tl-dot-note{background:var(--amber)}.tl-dot-info{background:var(--text-3)}
+.tl-label{font-size:11px;color:var(--text-3);margin-bottom:2px}
+.tl-text{font-size:13px}
+.form-group{margin-bottom:12px}
+.form-label{font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:5px;display:block}
+.form-input{width:100%;padding:9px 12px;font-size:14px;border:1px solid var(--gray-3);border-radius:var(--radius-sm);background:var(--white);color:var(--text);font-family:inherit;outline:none;transition:.15s}
+.form-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,158,227,.1)}
+textarea.form-input{resize:vertical;min-height:80px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-full{grid-column:span 2}
+.btn{padding:9px 18px;font-size:13px;font-weight:500;border-radius:var(--radius-sm);border:1px solid var(--gray-3);background:var(--white);color:var(--text);cursor:pointer;transition:.15s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--gray)}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{background:var(--blue-dark)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-block{width:100%;justify-content:center}
+.state-row{display:flex;gap:8px;flex-wrap:wrap}
+.state-opt{padding:6px 14px;border-radius:20px;font-size:12px;border:1px solid var(--gray-3);cursor:pointer;background:var(--white);font-family:inherit;color:var(--text-2);transition:.15s}
+.state-opt.s0.sel{background:var(--blue-light);color:#0077b6;border-color:#0077b6;font-weight:600}
+.state-opt.s1.sel{background:var(--amber-light);color:#8a5100;border-color:var(--amber);font-weight:600}
+.state-opt.s2.sel{background:var(--gray-2);color:var(--text-2);font-weight:600}
+.state-opt.s3.sel{background:#fff3e6;color:#cc5500;border-color:#f5a623;font-weight:600}
+.state-opt.s4.sel{background:var(--green-light);color:#1a6640;border-color:var(--green);font-weight:600}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,158,227,.3);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-row{display:flex;align-items:center;gap:8px;color:var(--text-3);font-size:13px;padding:8px 0}
+.empty{text-align:center;padding:40px 20px;color:var(--text-3)}
+.empty i{font-size:40px;display:block;margin-bottom:8px;opacity:.4}
+.link-pill{display:inline-flex;align-items:center;gap:5px;background:var(--blue-light);color:var(--blue-dark);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:500;text-decoration:none;border:1px solid rgba(0,119,182,.2)}
+.back-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.back-btn{background:none;border:none;cursor:pointer;color:var(--text-2);font-size:13px;display:flex;align-items:center;gap:4px;padding:0;font-family:inherit}
+.back-btn:hover{color:var(--text)}
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a18;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:.3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.pipeline-stage{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--gray-2)}
+.pipeline-stage:last-child{border-bottom:none}
+.extract-result{background:var(--green-light);border:1px solid #b8e6cf;border-radius:10px;padding:12px}
+
+/* Desktop: wider layout */
+@media(min-width:768px){
+  .main{padding:24px 24px 80px}
+  .pcard{padding:18px 20px}
+  .exp-hero{padding:24px}
+  .exp-name{font-size:22px}
+  .msg-types{grid-template-columns:repeat(4,1fr)}
+  .quick-contact{grid-template-columns:repeat(6,1fr)}
+  .stats-row{grid-template-columns:repeat(4,1fr)}
+  .form-grid{grid-template-columns:1fr 1fr}
+  .exp-stats{grid-template-columns:repeat(3,1fr)}
+  body{font-size:15px}
+}
+/* Tablet */
+@media(min-width:480px) and (max-width:767px){
+  .msg-types{grid-template-columns:repeat(2,1fr)}
+  .quick-contact{grid-template-columns:repeat(4,1fr)}
+  .stats-row{grid-template-columns:repeat(4,1fr)}
+}
+/* Mobile */
+@media(max-width:479px){
+  .form-grid{grid-template-columns:1fr}
+  .form-full{grid-column:span 1}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .msg-types{grid-template-columns:1fr 1fr}
+  .quick-contact{grid-template-columns:repeat(3,1fr)}
+  .exp-stats{grid-template-columns:repeat(3,1fr)}
+  .exp-name{font-size:16px}
+  .pcard-name{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo"><svg viewBox="0 0 18 14"><path d="M1 13l4-8 4 4 4-6 4 7"/></svg></div>
+    <div><div class="header-title">CRM Smart Point 2</div><div class="header-sub">Mercado Pago · Adquisicion</div></div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center"><button id="btn-backup" class="btn btn-sm" onclick="mostrarBackupPanel()" title="Respaldo de datos" style="padding:7px 10px"><i class="ti ti-database-export" style="font-size:16px"></i></button><button class="btn btn-sm btn-primary" onclick="showScreen('nuevo')"><i class="ti ti-plus"></i> Agregar</button></div>
+</div>
+<div class="main">
+  <div id="s-lista" class="screen active">
+    <div class="stats-row" id="stats-row"></div>
+    <div class="chips">
+      <button class="chip active" onclick="filtrar('todos',this)">Todos</button>
+      <button class="chip" onclick="filtrar('Primer contacto',this)">Primer contacto</button>
+      <button class="chip" onclick="filtrar('Seguimiento',this)">Seguimiento</button>
+      <button class="chip" onclick="filtrar('Sin respuesta',this)">Sin respuesta</button>
+      <button class="chip" onclick="filtrar('Caliente',this)">Caliente</button>
+      <button class="chip" onclick="filtrar('Cerrado',this)">Cerrado</button>
+    </div>
+    <div id="lista-container"></div>
+  </div>
+  <div id="s-detalle" class="screen">
+    <div class="back-row"><button class="back-btn" onclick="showScreen('lista')"><i class="ti ti-arrow-left"></i> Prospectos</button></div>
+    <div id="exp-container"></div>
+  </div>
+  <div id="s-nuevo" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="showScreen('lista')"><i class="ti ti-arrow-left"></i> Cancelar</button>
+      <span style="font-size:15px;font-weight:600">Nuevo prospecto</span>
+    </div>
+    <div class="exp-section">
+      <div class="exp-section-title"><i class="ti ti-building-store"></i> Datos del negocio</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Nombre del negocio *</label><input class="form-input" id="n-nombre" placeholder="Farmacia San Jose" required></div>
+        <div class="form-group"><label class="form-label">Giro / Tipo</label><input class="form-input" id="n-giro" placeholder="Farmacia, Restaurante..."></div>
+        <div class="form-group"><label class="form-label">Direccion</label><input class="form-input" id="n-dir" placeholder="Av. Principal 123, Col. Centro"></div>
+        <div class="form-group"><label class="form-label">Telefono del negocio *</label><input class="form-input" id="n-tel-neg" placeholder="+52 993 000 0000" required></div>
+        <div class="form-group"><label class="form-label">Correo electronico del negocio</label><input class="form-input" id="n-email-neg" placeholder="contacto@negocio.com"></div>
+        <div class="form-group form-full"><label class="form-label">Resena del negocio</label><textarea class="form-input" id="n-resena" placeholder="Descripcion breve..."></textarea></div>
+        <div class="form-group"><label class="form-label">URL / Sitio web</label><input class="form-input" id="n-url-neg" placeholder="https://..."></div>
+        <div class="form-group"><label class="form-label">Instagram negocio</label><input class="form-input" id="n-ig-neg" placeholder="@negocio"></div>
+        <div class="form-group"><label class="form-label">Facebook negocio</label><input class="form-input" id="n-fb-neg" placeholder="facebook.com/negocio"></div>
+      </div>
+    </div>
+    <div class="exp-section">
+      <div class="exp-section-title"><i class="ti ti-user"></i> Datos del dueno / representante</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Nombre completo</label><input class="form-input" id="n-dueno" placeholder="Carlos Lopez Perez"></div>
+        <div class="form-group"><label class="form-label">Cargo / Rol</label><input class="form-input" id="n-cargo" placeholder="Dueno, Gerente..."></div>
+        <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-input" id="n-wa" placeholder="+52 993 111 2222"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="n-email" placeholder="contacto@negocio.com"></div>
+        <div class="form-group"><label class="form-label">Instagram personal</label><input class="form-input" id="n-ig-due" placeholder="@dueno"></div>
+        <div class="form-group"><label class="form-label">LinkedIn</label><input class="form-input" id="n-li" placeholder="linkedin.com/in/..."></div>
+        <div class="form-group form-full"><label class="form-label">Perfil del representante</label><textarea class="form-input" id="n-perfil-due" placeholder="Descripcion del dueno, intereses..."></textarea></div>
+      </div>
+    </div>
+    <div class="exp-section">
+      <div class="exp-section-title"><i class="ti ti-target"></i> Potencial de venta</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Facturacion estimada mensual</label>
+          <select class="form-input" id="n-facturacion">
+            <option value="">Seleccionar...</option>
+            <option value="5k-15k">$5k - $15k (minimo KPI)</option>
+            <option value="15k-60k">$15k - $60k (potencial medio)</option>
+            <option value="60k+">+$60k (alto valor / TPV)</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Canal de contacto</label>
+          <select class="form-input" id="n-canal">
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Visita presencial">Visita presencial</option>
+            <option value="Llamada">Llamada</option>
+            <option value="Instagram">Instagram DM</option>
+            <option value="Email">Email</option>
+          </select>
+        </div>
+        <div class="form-group form-full"><label class="form-label">Contexto de venta</label><textarea class="form-input" id="n-contexto" placeholder="Ej. tiene 3 sucursales, ya usa terminal de otro banco, mucho efectivo..."></textarea></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <button class="btn btn-primary btn-block" id="btn-guardar" onclick="guardarProspecto()"><i class="ti ti-device-floppy"></i> Guardar prospecto</button>
+    </div>
+  </div>
+  <div id="s-resumen" class="screen"><div id="resumen-container"></div></div>
+</div>
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-lista" onclick="showScreen('lista')"><i class="ti ti-users"></i><span>Prospectos</span></button>
+  <button class="nav-item" id="nav-nuevo" onclick="showScreen('nuevo')"><i class="ti ti-circle-plus"></i><span>Agregar</span></button>
+  <button class="nav-item" id="nav-resumen" onclick="showScreen('resumen')"><i class="ti ti-chart-bar"></i><span>Resumen</span></button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const DB='mp_crm_v5';
+let prospectos=[];
+let filtroActivo='todos';
+let activoId=null;
+let ultimoMsg='';
+const COLORS=['#009ee3','#00a650','#f5a623','#e53935','#8e44ad','#16a085','#d35400','#2980b9'];
+const ESTADOS=['Primer contacto','Seguimiento','Sin respuesta','Caliente','Cerrado'];
+const PIPELINE_PCT={'Primer contacto':15,'Seguimiento':40,'Sin respuesta':20,'Caliente':75,'Cerrado':100};
+const PIPELINE_COL={'Primer contacto':'#009ee3','Seguimiento':'#f5a623','Sin respuesta':'#bbb','Caliente':'#f5501e','Cerrado':'#00a650'};
+const BADGE_CLS={'Primer contacto':'badge-new','Seguimiento':'badge-follow','Sin respuesta':'badge-cold','Caliente':'badge-hot','Cerrado':'badge-done'};
+
+function color(s){let h=0;for(let c of s)h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
+function initials(s){if(!s)return'?';const p=s.trim().split(/\s+/);return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
+function hoy(n=0){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];}
+function ahora(){return new Date().toISOString().substring(0,16);}
+function badge(e){const c=BADGE_CLS[e]||'badge-cold';return `<span class="badge ${c}">${e}</span>`;}
+
+function cargar(){
+  try{prospectos=JSON.parse(localStorage.getItem(DB)||'[]');}catch(e){prospectos=[];}
+  if(!prospectos.length) prospectos=demo();
+}
+function guardar(){localStorage.setItem(DB,JSON.stringify(prospectos));}
+
+function demo(){
+  return[
+    {id:1,nombre:'Farmacia Salud Total',giro:'Farmacia',dir:'Av. Mendez #400, Col. Centro, Villahermosa',telNeg:'+52 993 312 1100',resena:'Farmacia con 12 anos y 3 sucursales. Alto flujo de clientes diario.',urlNeg:'https://farmaciastotal.mx',igNeg:'@farmacias_salud_total',fbNeg:'',dueno:'Ing. Roberto Mendez Sanchez',cargo:'Propietario',wa:'+52 993 111 2233',email:'roberto@farmaciastotal.mx',igDue:'@robmendez',li:'',perfilDue:'Empresario 15+ anos en salud. Orientado a tecnologia.',facturacion:'60k+',canal:'WhatsApp',contexto:'3 sucursales, efectivo, terminal Bancomer con comisiones altas',estado:'Primer contacto',historial:[{tipo:'info',fecha:hoy()+'T09:00',texto:'Expediente creado'}],creado:hoy()},
+    {id:2,nombre:'Taqueria El Guero',giro:'Restaurante',dir:'Calle Aldama #88, Col. Tamulte, Villahermosa',telNeg:'+52 993 456 7890',resena:'Taqueria popular zona norte, 8 anos de operacion.',urlNeg:'',igNeg:'@tacos_elguero_tab',fbNeg:'facebook.com/tacoselguero',dueno:'Francisco Ruiz Trujillo',cargo:'Dueno',wa:'+52 993 444 5566',email:'',igDue:'',li:'',perfilDue:'Solo acepta efectivo, pierde clientes.',facturacion:'15k-60k',canal:'WhatsApp',contexto:'Solo efectivo, pierde ventas, interesado en tecnologia.',estado:'Sin respuesta',historial:[{tipo:'enviado',fecha:hoy(-3)+'T11:00',texto:'Primer mensaje enviado por WhatsApp'}],creado:hoy(-3)},
+    {id:3,nombre:'Ferreteria El Constructor',giro:'Ferreteria',dir:'Blvd. Adolfo Ruiz Cortines #1560, Villahermosa',telNeg:'+52 993 780 0001',resena:'Ferreteria 20 anos, proveedora de constructoras.',urlNeg:'',igNeg:'',fbNeg:'',dueno:'Lic. Ana Torres Beltran',cargo:'Gerente General',wa:'+52 993 777 8899',email:'ana@ferreteria.com',igDue:'',li:'linkedin.com/in/anatorres',perfilDue:'Profesional, pide todo por escrito.',facturacion:'15k-60k',canal:'Visita presencial',contexto:'Vende a constructoras, requiere factura, mostro interes.',estado:'Seguimiento',historial:[{tipo:'enviado',fecha:hoy(-5)+'T09:00',texto:'Contacto presencial'},{tipo:'reply',fecha:hoy(-2)+'T14:00',texto:'Respondio, pide info de comisiones'}],creado:hoy(-5)}
+  ];
+}
+
+function showScreen(s){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.getElementById('s-'+s).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  const navMap={lista:'nav-lista',detalle:'nav-lista',nuevo:'nav-nuevo',resumen:'nav-resumen'};
+  const navEl=document.getElementById(navMap[s]||'nav-lista');
+  if(navEl) navEl.classList.add('active');
+  if(s==='lista'){renderLista();renderStats();}
+  if(s==='resumen') renderResumen();
+  window.scrollTo(0,0);
+}
+
+function filtrar(f,btn){
+  filtroActivo=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  renderLista();
+}
+
+function renderStats(){
+  const total=prospectos.length;
+  const tpv=prospectos.filter(p=>p.facturacion==='60k+').length;
+  const hot=prospectos.filter(p=>p.estado==='Caliente').length;
+  const done=prospectos.filter(p=>p.estado==='Cerrado').length;
+  document.getElementById('stats-row').innerHTML=
+    `<div class="stat-pill"><div class="stat-pill-n">${total}</div><div class="stat-pill-l">Total</div></div>`+
+    `<div class="stat-pill"><div class="stat-pill-n">${tpv}</div><div class="stat-pill-l">TPV +$60k</div></div>`+
+    `<div class="stat-pill"><div class="stat-pill-n">${hot}</div><div class="stat-pill-l">Calientes</div></div>`+
+    `<div class="stat-pill"><div class="stat-pill-n">${done}</div><div class="stat-pill-l">Cerrados</div></div>`;
+}
+
+function contactBtns(p,cls){
+  let s='';
+  if(p.wa) s+=`<a href="https://wa.me/${p.wa.replace(/[^0-9]/g,'')}" target="_blank" class="${cls} wa" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i>${cls==='qbtn'?'<span>WhatsApp</span>':''}</a>`;
+  const ig=(p.igNeg||p.igDue||'').replace('@','');
+  if(ig) s+=`<a href="https://instagram.com/${ig}" target="_blank" class="${cls} ig"><i class="ti ti-brand-instagram"></i>${cls==='qbtn'?'<span>Instagram</span>':''}</a>`;
+  if(p.fbNeg) s+=`<a href="https://${p.fbNeg}" target="_blank" class="${cls} fb"><i class="ti ti-brand-facebook"></i>${cls==='qbtn'?'<span>Facebook</span>':''}</a>`;
+  if(p.email) s+=`<a href="mailto:${p.email}" class="${cls} em"><i class="ti ti-mail"></i>${cls==='qbtn'?'<span>Email</span>':''}</a>`;
+  if(p.li) s+=`<a href="https://${p.li}" target="_blank" class="${cls} li"><i class="ti ti-brand-linkedin"></i>${cls==='qbtn'?'<span>LinkedIn</span>':''}</a>`;
+  if(p.dir) s+=`<a href="https://maps.google.com/?q=${encodeURIComponent(p.dir)}" target="_blank" class="${cls} maps"><i class="ti ti-map-pin"></i>${cls==='qbtn'?'<span>Mapa</span>':''}</a>`;
+  return s;
+}
+
+function renderLista(){
+  const lista=filtroActivo==='todos'?prospectos:prospectos.filter(p=>p.estado===filtroActivo);
+  const c=document.getElementById('lista-container');
+  if(!lista.length){c.innerHTML='<div class="empty"><i class="ti ti-users"></i><p>Sin prospectos en este segmento</p></div>';return;}
+  const facL={'5k-15k':'$5k-$15k','15k-60k':'$15k-$60k','60k+':'+$60k'};
+  c.innerHTML=lista.map(p=>{
+    const dias=Math.floor((Date.now()-new Date(p.creado).getTime())/86400000);
+    const pct=PIPELINE_PCT[p.estado]||15;
+    const col=PIPELINE_COL[p.estado]||'#009ee3';
+    const nom2=p.dueno?(' · '+p.dueno.split(' ').slice(0,2).join(' ')):'';
+    return `<div class="pcard" onclick="verExpediente(${p.id})">
+      <div class="pcard-top">
+        <div class="avatar" style="background:${color(p.nombre)}">${initials(p.nombre)}</div>
+        <div class="pcard-info"><div class="pcard-name">${p.nombre}</div><div class="pcard-sub">${p.giro}${nom2}</div></div>
+        ${badge(p.estado)}
+      </div>
+      <div class="pcard-meta">
+        <span><i class="ti ti-credit-card"></i>${facL[p.facturacion]||p.facturacion||'-'}</span>
+        <span><i class="ti ti-device-mobile"></i>${p.canal}</span>
+        <span><i class="ti ti-clock"></i>${dias}d</span>
+        <span><i class="ti ti-message"></i>${p.historial.length}</span>
+      </div>
+      <div class="pipeline-bar"><div class="pipeline-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="pcard-footer">
+        <div class="contact-btns" onclick="event.stopPropagation()">${contactBtns(p,'cbtn')}</div>
+        <button class="btn btn-sm" onclick="event.stopPropagation();verExpediente(${p.id});setTimeout(()=>document.getElementById('sec-msg').scrollIntoView({behavior:'smooth'}),400)"><i class="ti ti-message-bolt"></i> Mensaje</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function frow(icon,label,val){
+  if(!val) return '';
+  return `<div class="field-row"><div class="field-icon"><i class="ti ${icon}"></i></div><div><div class="field-label">${label}</div><div class="field-value">${val}</div></div></div>`;
+}
+
+function renderHist(p){
+  if(!p.historial.length) return '<div class="empty" style="padding:1rem 0"><i class="ti ti-history"></i><p>Sin eventos</p></div>';
+  return p.historial.slice().reverse().map(function(h){
+    var dcMap={'enviado':'tl-dot-sent','reply':'tl-dot-reply','nota':'tl-dot-note','info':'tl-dot-info'};
+    var lblMap={'enviado':'Mensaje enviado','reply':'Respuesta recibida','nota':'Nota','info':'Registro'};
+    var dc=dcMap[h.tipo]||'tl-dot-info';
+    var lbl=lblMap[h.tipo]||h.tipo;
+    var colMap={'enviado':'#009ee3','reply':'#00a650','nota':'#f5a623','info':'#999'};
+    var col=colMap[h.tipo]||'#999';
+    var icoMap={'enviado':'ti-send','reply':'ti-message-check','nota':'ti-pencil','info':'ti-info-circle'};
+    var ico=icoMap[h.tipo]||'ti-info-circle';
+    // For sent messages show full text in a nice bubble
+    if(h.tipo==='enviado'){
+      return '<div style="margin-bottom:14px">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+
+          '<div style="width:28px;height:28px;background:'+col+'22;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+
+            '<i class="ti '+ico+'" style="font-size:14px;color:'+col+'"></i>'+
+          '</div>'+
+          '<div>'+
+            '<div style="font-size:12px;font-weight:600;color:'+col+'">'+lbl+'</div>'+
+            '<div style="font-size:11px;color:#999">'+h.fecha.replace('T',' ')+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:#f0f8ff;border-left:3px solid '+col+';border-radius:0 10px 10px 0;padding:12px 14px;font-size:13px;color:#1a1a18;line-height:1.7;white-space:pre-wrap">'+h.texto+'</div>'+
+      '</div>';
+    }
+    if(h.tipo==='reply'){
+      return '<div style="margin-bottom:14px">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+
+          '<div style="width:28px;height:28px;background:'+col+'22;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+
+            '<i class="ti '+ico+'" style="font-size:14px;color:'+col+'"></i>'+
+          '</div>'+
+          '<div>'+
+            '<div style="font-size:12px;font-weight:600;color:'+col+'">'+lbl+'</div>'+
+            '<div style="font-size:11px;color:#999">'+h.fecha.replace('T',' ')+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:#f0fff6;border-left:3px solid '+col+';border-radius:0 10px 10px 0;padding:12px 14px;font-size:13px;color:#1a1a18;line-height:1.7;white-space:pre-wrap">'+h.texto+'</div>'+
+      '</div>';
+    }
+    return '<div class="tl-item"><div class="tl-dot '+dc+'"></div><div style="flex:1"><div class="tl-label">'+lbl+' · '+h.fecha.replace('T',' ')+'</div><div class="tl-text">'+h.texto+'</div></div></div>';
+  }).join('');
+}
+function verExpediente(id){
+  const p=prospectos.find(x=>x.id===id);
+  if(!p) return;
+  activoId=id; ultimoMsg='';
+  const facL={'5k-15k':'$5k-$15k','15k-60k':'$15k-$60k','60k+':'+$60k'};
+  const dias=Math.floor((Date.now()-new Date(p.creado).getTime())/86400000);
+  const pct=PIPELINE_PCT[p.estado]||15;
+  const col=PIPELINE_COL[p.estado]||'#009ee3';
+  const qbtns=contactBtns(p,'qbtn')+'<button class="qbtn copy" onclick="copiarMsg()"><i class="ti ti-copy"></i><span>Copiar msg</span></button>';
+  const stateOpts=ESTADOS.map((e,i)=>`<button class="state-opt s${i}${p.estado===e?' sel':''}" onclick="cambiarEstado(${p.id},'${e}',this)">${e}</button>`).join('');
+
+  document.getElementById('exp-container').innerHTML=`
+    <div class="exp-hero">
+      <div class="exp-hero-top">
+        <div class="exp-avatar" style="background:rgba(255,255,255,.15)">${initials(p.nombre)}</div>
+        <div style="flex:1"><div class="exp-name">${p.nombre}</div><div class="exp-giro">${p.giro}</div><span class="exp-badge">${p.estado}</span></div>
+      </div>
+      <div class="exp-stats">
+        <div class="exp-stat"><div class="exp-stat-n">${facL[p.facturacion]||'-'}</div><div class="exp-stat-l">Facturacion</div></div>
+        <div class="exp-stat"><div class="exp-stat-n">${dias}d</div><div class="exp-stat-l">En pipeline</div></div>
+        <div class="exp-stat"><div class="exp-stat-n">${p.historial.length}</div><div class="exp-stat-l">Interacciones</div></div>
+      </div>
+    </div>
+    <div class="exp-section">
+      <div class="exp-section-title"><i class="ti ti-building-store"></i> Datos del negocio</div>
+      ${frow('ti-building-store','Negocio',p.nombre)}
+      ${frow('ti-tag','Giro',p.giro)}
+      ${frow('ti-map-pin','Direccion',p.dir)}
+      ${frow('ti-phone','Telefono',p.telNeg)}
+      ${p.emailNeg?'<div class="field-row"><div class="field-icon"><i class="ti ti-mail" style="color:var(--blue)"></i></div><div><div class="field-label">Email del negocio</div><div class="field-value"><a href="mailto:'+p.emailNeg+'">'+p.emailNeg+'</a></div></div></div>':''}
+      ${p.resena?`<div style="background:var(--gray);border-radius:8px;padding:10px;font-size:12px;color:var(--text-2);line-height:1.6;margin-top:4px">${p.resena}</div>`:''}
+    </div>
+    <div class="exp-section">
+      <div class="exp-section-title"><i class="ti ti-user-circle"></i> Representante</div>
+      ${frow('ti-user','Nombre',p.dueno)}
+      ${frow('ti-briefcase','Cargo',p.cargo)}
+      ${p.wa?`<div class="field-row"><div class="field-icon"><i class="ti ti-brand-whatsapp" style="color:#25D366"></i></div><div><div class="field-label">WhatsApp</div><div class="field-value"><a href="https://wa.me/${p.wa.replace(/[^0-9]/g,'')}" target="_blank">${p.wa}</a></div></div></div>`:''}
+      ${p.email?`<div class="field-row"><div class="field-icon"><i class="ti ti-mail" style="color:var(--blue)"></i></div><div><div class="field-label">Email</div><div class="field-value"><a href="mailto:${p.email}">${p.email}</a></div></div></div>`:''}
+      ${p.perfilDue?`<div style="background:var(--gray);border-radius:8px;padding:10px;font-size:12px;color:var(--text-2);line-height:1.6;margin-top:8px">${p.perfilDue}</div>`:''}
+    </div>
+    ${p.contexto?`<div class="exp-section"><div class="exp-section-title"><i class="ti ti-notes"></i> Contexto de venta</div><div style="font-size:13px;color:var(--text-2);line-height:1.6">${p.contexto}</div></div>`:''}
+    <div class="exp-section" id="sec-msg">
+      <div class="exp-section-title"><i class="ti ti-message-bolt"></i> Generar mensaje con IA</div>
+      <div class="msg-types">
+        <button class="msg-type-btn" onclick="genMsg('primer_contacto',this)"><div class="msg-type-icon"><i class="ti ti-hand-click" style="color:var(--blue)"></i></div><div class="msg-type-name">Primer contacto</div><div class="msg-type-desc">Presentacion inicial</div></button>
+        <button class="msg-type-btn" onclick="genMsg('seguimiento',this)"><div class="msg-type-icon"><i class="ti ti-refresh-alert" style="color:var(--amber)"></i></div><div class="msg-type-name">Seguimiento</div><div class="msg-type-desc">Ya conoce la propuesta</div></button>
+        <button class="msg-type-btn" onclick="genMsg('reenganche',this)"><div class="msg-type-icon"><i class="ti ti-alarm" style="color:var(--red)"></i></div><div class="msg-type-name">Sin respuesta</div><div class="msg-type-desc">Reactivar despues de silencio</div></button>
+        <button class="msg-type-btn" onclick="genMsg('cierre',this)"><div class="msg-type-icon"><i class="ti ti-trophy" style="color:var(--green)"></i></div><div class="msg-type-name">Cierre</div><div class="msg-type-desc">Generar urgencia y cerrar</div></button>
+      </div>
+      <div id="msg-output" class="msg-output placeholder">Selecciona un tipo de mensaje para generarlo...</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+        <button onclick="copiarMsgIr('wa')" style="padding:11px;background:#25D366;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px"><i class="ti ti-brand-whatsapp" style="font-size:16px"></i> Copiar e ir a WA</button>
+        <button onclick="copiarMsgIr('ig')" style="padding:11px;background:linear-gradient(135deg,#E1306C,#833ab4);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px"><i class="ti ti-brand-instagram" style="font-size:16px"></i> Copiar e ir a IG</button>
+        <button onclick="copiarMsgIr('email')" style="padding:11px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px"><i class="ti ti-mail" style="font-size:16px"></i> Copiar e ir a Email</button>
+        <button onclick="copiarMsg()" style="padding:11px;background:#f7f7f5;color:#1a1a18;border:1.5px solid #e0e0db;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px"><i class="ti ti-copy" style="font-size:16px"></i> Solo copiar</button>
+        <button onclick="marcarEnviado()" style="padding:11px;background:#009ee3;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;grid-column:span 2"><i class="ti ti-check" style="font-size:16px"></i> Guardar en historial</button>
+      </div>
+    </div>
+    <div class="exp-section" id="sec-mensajes">
+      <div class="exp-section-title" style="justify-content:space-between">
+        <span style="display:flex;align-items:center;gap:6px"><i class="ti ti-message-2" style="font-size:15px;color:var(--blue)"></i> Mensajes y notas</span>
+        <span id="msg-count" style="font-size:11px;background:var(--blue-light);color:var(--blue);padding:3px 8px;border-radius:20px;font-weight:600">${p.historial.filter(function(h){return h.tipo==='enviado'||h.tipo==='reply'||h.tipo==='nota';}).length}</span>
+      </div>
+      <div id="msg-hist-list">
+        ${(function(){
+          var items=p.historial.filter(function(h){return h.tipo==='enviado'||h.tipo==='reply'||h.tipo==='nota';}).slice().reverse();
+          if(!items.length) return '<div style="text-align:center;padding:20px;color:#999;font-size:13px"><i class="ti ti-message-off" style="font-size:28px;display:block;margin-bottom:6px;opacity:.3"></i>Sin mensajes aún</div>';
+          return items.map(function(h){
+            var colMap={'enviado':'#009ee3','reply':'#00a650','nota':'#f5a623'};
+            var lblMap={'enviado':'Mensaje enviado','reply':'Respuesta del cliente','nota':'Nota'};
+            var bgMap={'enviado':'#f0f8ff','reply':'#f0fff6','nota':'#fffbf0'};
+            var col=colMap[h.tipo]||'#999';
+            return '<div style="margin-bottom:12px">'+
+              '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">'+
+                '<div style="width:6px;height:6px;border-radius:50%;background:'+col+';flex-shrink:0"></div>'+
+                '<span style="font-size:11px;font-weight:600;color:'+col+'">'+(lblMap[h.tipo]||h.tipo)+'</span>'+
+                '<span style="font-size:11px;color:#999;margin-left:auto">'+h.fecha.replace('T',' ')+'</span>'+
+              '</div>'+
+              '<div style="background:'+(bgMap[h.tipo]||'#f7f7f5')+';border-left:3px solid '+col+';border-radius:0 10px 10px 0;padding:12px 14px;font-size:13px;color:#1a1a18;line-height:1.7;white-space:pre-wrap">'+h.texto+'</div>'+
+            '</div>';
+          }).join('');
+        })()}
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <textarea id="nota-inp" placeholder="Agregar nota o respuesta del cliente..." style="flex:1;min-height:56px;font-size:13px;padding:10px;border:1px solid #e0e0db;border-radius:10px;font-family:inherit;resize:vertical;outline:none"></textarea>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button onclick="agregarEvento('nota')" class="btn btn-sm"><i class="ti ti-pencil"></i> Nota</button>
+          <button onclick="agregarEvento('reply')" style="padding:6px 12px;font-size:12px;color:#00a650;border:1px solid #00a650;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit"><i class="ti ti-message-check"></i> Resp.</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+    '+ renderFlujo(p) +'
+      <button class="btn btn-sm" onclick="editarProspecto(${p.id})"><i class="ti ti-edit"></i> Editar</button>
+      <button class="btn btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarProspecto(${p.id})"><i class="ti ti-trash"></i> Eliminar</button>
+    </div>`;
+  showScreen('detalle');
+}
+
+function cambiarEstado(id,estado,btn){
+  const p=prospectos.find(x=>x.id===id);
+  p.estado=estado;
+  guardar();
+  document.querySelectorAll('.state-opt').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  toast('Estado actualizado');
+}
+
+function buildPrompt(p, tipo){
+  var t1='un PRIMER CONTACTO para presentarte como Janet Mendez de Mercado Pago y despertar interes genuino en la Point Smart 2.';
+  var t2='un mensaje de SEGUIMIENTO. El prospecto ya conoce la propuesta. Retoma el beneficio mas relevante y propone un siguiente paso concreto.';
+  var t3='un mensaje de REENGANCHE para un prospecto que no ha respondido en varios dias. Usa un angulo nuevo o dato que no haya considerado. Sin presionar.';
+  var t4='un mensaje de CIERRE para un prospecto que mostro interes. Crea urgencia real y facilita el paso concreto para cerrar la activacion.';
+  var tipoMap={primer_contacto:t1,seguimiento:t2,reenganche:t3,cierre:t4};
+  var facMap={'5k-15k':'entre $5,000 y $15,000 pesos mensuales','15k-60k':'entre $15,000 y $60,000 pesos mensuales','60k+':'mas de $60,000 pesos mensuales'};
+  var ctx=(p.contexto||'').toLowerCase();
+  var estrategia='';
+  if(ctx.indexOf('efectivo')>-1||ctx.indexOf('no tiene terminal')>-1){
+    estrategia='Negocio sin terminal. Enfatiza costo CERO de arranque: sin renta, chip 4G y papel incluidos de por vida. Solo paga comision cuando vende.';
+  }else if(ctx.indexOf('banco')>-1||ctx.indexOf('clip')>-1||ctx.indexOf('getnet')>-1||ctx.indexOf('otra terminal')>-1){
+    estrategia='Ya tiene terminal de la competencia. Ataca: dinero al instante vs dias de espera, cero costos fijos vs renta mensual, ecosistema MELI vs solo cobrar tarjetas.';
+  }else if(p.facturacion==='60k+'){
+    estrategia='Negocio de alto volumen. Enfatiza rendimientos diarios, creditos comerciales, pricing por escalas y construccion de TPV.';
+  }else{
+    estrategia='Usa los 3 diferenciadores balanceados segun el giro del negocio.';
+  }
+  var lines=[
+    'QUIEN ERES:',
+    'Janet Mendez, Analista de Expansion Comercial (Hunting Instore First Party) de Mercado Pago — ecosistema Mercado Libre. Zona: Villahermosa y alrededores. Empatica, profesional, conoces a fondo el producto y el perfil de cada negocio.',
+    '',
+    'PRODUCTO — Point Smart 2 ($649 pago unico):',
+    '- Acepta todo: Mastercard, Visa, AMEX, Banco del Bienestar, Vales (Pluxee/Sodexo), debito, credito, QR.',
+    '- Pricing flexible por escalas: comision baja segun volumen de ventas.',
+    '- Integracion completa al ecosistema MELI: TDC, TDD, Wallet, software punto de venta, creditos personales.',
+    '',
+    '3 DIFERENCIADORES VS COMPETENCIA:',
+    '1. DINERO AL INSTANTE — Acreditacion inmediata, incluso fines de semana y festivos. Bancos/Clip tardan 24-72 hrs habiles.',
+    '2. CERO COSTOS FIJOS — Sin renta mensual. Rollos de papel gratis de por vida. Chip 4G ilimitado incluido. Solo pagas cuando vendes.',
+    '3. ECOSISTEMA FINANCIERO — Rendimientos diarios automaticos sobre el saldo (via GBM). Venta de recargas desde la terminal. Creditos comerciales 100% en linea basados en historial de ventas.',
+    '',
+    'DATOS DEL PROSPECTO:',
+    '- Negocio: '+p.nombre,
+    '- Giro: '+(p.giro||'No especificado'),
+    '- Contacto: '+(p.dueno||'No especificado')+(p.cargo?' ('+p.cargo+')':''),
+    '- Facturacion estimada: '+(facMap[p.facturacion]||p.facturacion||'No especificada'),
+    '- Canal de contacto: '+(p.canal||'WhatsApp'),
+    (p.contexto?'- Contexto relevante: '+p.contexto:''),
+    (p.resena?'- Descripcion del negocio: '+p.resena:''),
+    '',
+    'ESTRATEGIA RECOMENDADA: '+estrategia,
+    '',
+    'INSTRUCCION: Redacta '+tipoMap[tipo],
+    '',
+    'REGLAS DE REDACCION:',
+    '- Firma siempre como: Janet Mendez — Mercado Pago',
+    '- Tono ejecutivo pero cercano y empatico. Persona real de confianza, no vendedor generico.',
+    '- Formato WhatsApp: max 3-4 parrafos cortos, ideales para leer en celular.',
+    '- Personaliza usando el nombre del negocio y su giro especifico — demuestra que investigaste.',
+    '- Max 2 emojis relevantes.',
+    '- Termina con UNA sola pregunta o llamada a accion clara y concreta.',
+    '- PROHIBIDO: "te ofrezco una gran oportunidad", "somos lideres del mercado", frases genericas.',
+    '- Solo devuelve el mensaje final. Sin explicaciones, sin comillas, sin formato markdown.'
+  ];
+  return lines.filter(function(l){return l!=='';}).join('\n');
+}
+
+function mostrarPegaMensaje(tipo){
+  var p=prospectos.find(function(x){return x.id===activoId;});
+  var prompt=buildPrompt(p,tipo);
+  window._currentPrompt=prompt;
+  var labels={primer_contacto:'Primer contacto',seguimiento:'Seguimiento',reenganche:'Sin respuesta',cierre:'Cierre'};
+  var colors={primer_contacto:'#009ee3',seguimiento:'#f5a623',reenganche:'#e53935',cierre:'#00a650'};
+  var icons={primer_contacto:'ti-hand-click',seguimiento:'ti-refresh-alert',reenganche:'ti-alarm',cierre:'ti-trophy'};
+  var lbl=labels[tipo]||tipo;
+  var col=colors[tipo]||'#009ee3';
+  var ico=icons[tipo]||'ti-message';
+  var out=document.getElementById('msg-output');
+  out.style.cssText='padding:0;background:transparent;border:none;min-height:0';
+  out.innerHTML='';
+
+  var wrap=document.createElement('div');
+  wrap.style.cssText='border-radius:14px;overflow:hidden;border:2px solid '+col+'44';
+
+  var hdr=document.createElement('div');
+  hdr.style.cssText='background:linear-gradient(135deg,'+col+'dd,'+col+'88);padding:14px 16px;display:flex;align-items:center;gap:10px';
+  hdr.innerHTML='<div style="width:36px;height:36px;background:rgba(255,255,255,.25);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="ti '+ico+'" style="color:#fff"></i></div><div><div style="font-size:14px;font-weight:700;color:#fff">Mensaje: '+lbl+'</div><div style="font-size:11px;color:rgba(255,255,255,.85)">para '+p.nombre+'</div></div>';
+  wrap.appendChild(hdr);
+
+  var s1=document.createElement('div');
+  s1.style.cssText='padding:16px;background:#fff;border-bottom:1px solid #f0f0ee';
+
+  // Step label row
+  var n1=document.createElement('div');
+  n1.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px';
+  n1.innerHTML='<div style="width:24px;height:24px;background:'+col+';border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">1</div><span style="font-size:13px;font-weight:600;color:#1a1a18">Copia el prompt y pégalo en el chat de Claude</span>';
+  s1.appendChild(n1);
+
+  // Prompt preview box with COPY BUTTON top-right
+  var prevWrap=document.createElement('div');
+  prevWrap.style.cssText='position:relative;margin-bottom:12px';
+
+  var prev=document.createElement('div');
+  prev.style.cssText='background:#f4f4f2;border-radius:10px;padding:12px 12px 12px 12px;font-size:11px;font-family:monospace;color:#555;line-height:1.6;max-height:110px;overflow:hidden;white-space:pre-wrap;padding-right:48px';
+  prev.textContent=prompt.substring(0,220)+'...';
+
+  var fade=document.createElement('div');
+  fade.style.cssText='position:absolute;bottom:0;left:0;right:0;height:32px;background:linear-gradient(transparent,#f4f4f2);border-radius:0 0 10px 10px;pointer-events:none';
+
+  // BIG COPY BUTTON top-right corner of the box
+  var quickCopy=document.createElement('button');
+  quickCopy.title='Copiar prompt completo';
+  quickCopy.style.cssText='position:absolute;top:8px;right:8px;width:34px;height:34px;background:'+col+';color:#fff;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:2;transition:.2s;flex-shrink:0';
+  quickCopy.innerHTML='<i class="ti ti-copy"></i>';
+  quickCopy.onclick=function(){
+    var pr=window._currentPrompt||'';
+    navigator.clipboard.writeText(pr).then(function(){
+      quickCopy.innerHTML='<i class="ti ti-check"></i>';
+      quickCopy.style.background='#00a650';
+      quickCopy.style.transform='scale(1.1)';
+      toast('Prompt copiado — pégalo en Claude');
+      setTimeout(function(){
+        quickCopy.innerHTML='<i class="ti ti-copy"></i>';
+        quickCopy.style.background=col;
+        quickCopy.style.transform='scale(1)';
+      },2500);
+    });
+  };
+
+  prevWrap.appendChild(prev);
+  prevWrap.appendChild(fade);
+  prevWrap.appendChild(quickCopy);
+  s1.appendChild(prevWrap);
+
+  // Big full-width copy button below
+  var copyBtn=document.createElement('button');
+  copyBtn.style.cssText='width:100%;padding:13px;background:'+col+';color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px';
+  copyBtn.innerHTML='<i class="ti ti-copy" style="font-size:18px"></i> Copiar prompt completo';
+  copyBtn.onclick=function(){
+    var pr=window._currentPrompt||'';
+    navigator.clipboard.writeText(pr).then(function(){
+      copyBtn.innerHTML='<i class="ti ti-circle-check" style="font-size:18px"></i> Copiado — pégalo en Claude';
+      copyBtn.style.background='#00a650';
+      quickCopy.innerHTML='<i class="ti ti-check"></i>';
+      quickCopy.style.background='#00a650';
+      setTimeout(function(){
+        copyBtn.innerHTML='<i class="ti ti-copy" style="font-size:18px"></i> Copiar prompt completo';
+        copyBtn.style.background=col;
+        quickCopy.innerHTML='<i class="ti ti-copy"></i>';
+        quickCopy.style.background=col;
+      },2500);
+      toast('Prompt copiado');
+    });
+  };
+  s1.appendChild(copyBtn);
+  wrap.appendChild(s1);
+
+  var s2=document.createElement('div');
+  s2.style.cssText='padding:16px;background:#fafaf8';
+  var n2=document.createElement('div');
+  n2.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px';
+  n2.innerHTML='<div style="width:24px;height:24px;background:'+col+';border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">2</div><span style="font-size:13px;font-weight:600;color:#1a1a18">Pega aquí el mensaje que generó Claude</span>';
+  s2.appendChild(n2);
+
+  var ta=document.createElement('textarea');
+  ta.id='msg-paste-input';
+  ta.placeholder='Pega aquí el mensaje generado por Claude...';
+  ta.style.cssText='width:100%;min-height:120px;font-size:13px;padding:12px;border:1.5px solid #e0e0db;border-radius:10px;font-family:inherit;resize:vertical;background:#fff;outline:none;line-height:1.6;display:block;box-sizing:border-box';
+  ta.addEventListener('focus',function(){ta.style.borderColor=col;});
+  ta.addEventListener('blur',function(){ta.style.borderColor='#e0e0db';});
+  s2.appendChild(ta);
+
+  var applyBtn=document.createElement('button');
+  applyBtn.style.cssText='width:100%;margin-top:10px;padding:12px;background:#00a650;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px';
+  applyBtn.innerHTML='<i class="ti ti-check" style="font-size:18px"></i> Aplicar mensaje al expediente';
+  applyBtn.onclick=aplicarMsgPegado;
+  s2.appendChild(applyBtn);
+  wrap.appendChild(s2);
+
+  out.appendChild(wrap);
+}
+
+function copiarPromptCompleto(){
+  if(!window._currentPrompt){toast('Genera un mensaje primero');return;}
+  navigator.clipboard.writeText(window._currentPrompt).then(function(){toast('Prompt copiado');});
+}
+
+
+function aplicarMsgPegado(){
+  const txt=document.getElementById('msg-paste-input');
+  if(!txt||!txt.value.trim()){toast('Pega el mensaje primero');return;}
+  ultimoMsg=txt.value.trim();
+  const out=document.getElementById('msg-output');
+  out.className='msg-output';
+  out.textContent=ultimoMsg;
+  toast('Mensaje aplicado');
+}
+
+async function genMsg(tipo,btn){
+  var p=prospectos.find(function(x){return x.id===activoId;});
+  if(!p) return;
+  document.querySelectorAll('.msg-type-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  // Always show the prompt UI — no API calls needed
+  mostrarPegaMensaje(tipo);
+}
+
+function copiarMsg(){
+  if(!ultimoMsg){toast('Genera un mensaje primero');return;}
+  navigator.clipboard.writeText(ultimoMsg).then(()=>toast('Mensaje copiado'));
+}
+
+function copiarMsgIr(red){
+  const p=prospectos.find(x=>x.id===activoId);
+  if(!ultimoMsg){toast('Genera un mensaje primero');return;}
+  navigator.clipboard.writeText(ultimoMsg).then(()=>{
+    toast('Mensaje copiado');
+    setTimeout(()=>{
+      let url='';
+      if(red==='wa'&&p.wa) url='https://wa.me/'+p.wa.replace(/[^0-9]/g,'');
+      else if(red==='ig'){const ig=(p.igNeg||p.igDue||'').replace('@','');url=ig?'https://instagram.com/'+ig:'https://instagram.com';}
+      else if(red==='email'){
+        const em=p.email||p.emailNeg||'';
+        if(!em){toast('Sin email registrado para este prospecto');return;}
+        url='mailto:'+em+'?subject=Point%20Smart%202%20%E2%80%94%20Mercado%20Pago&body='+encodeURIComponent(ultimoMsg);
+      }
+      if(url) window.open(url,'_blank');
+    },600);
+  });
+}
+
+function marcarEnviado(){
+  if(!ultimoMsg){toast('Genera un mensaje primero');return;}
+  const p=prospectos.find(x=>x.id===activoId);
+  if(!p) return;
+  p.historial.push({tipo:'enviado',fecha:ahora(),texto:ultimoMsg});
+  if(p.estado==='Primer contacto'||p.estado==='Sin respuesta') p.estado='Seguimiento';
+  guardar();
+  toast('Mensaje guardado ✓');
+  setTimeout(function(){
+    verExpediente(activoId);
+    setTimeout(function(){var sec=document.getElementById('sec-mensajes');if(sec)sec.scrollIntoView({behavior:'smooth'});},200);
+  },150);
+}
+
+function agregarEvento(tipo){
+  const p=prospectos.find(x=>x.id===activoId);
+  if(!p) return;
+  const txt=document.getElementById('nota-inp').value.trim();
+  if(!txt){toast('Escribe algo primero');return;}
+  p.historial.push({tipo:tipo==='reply'?'reply':'nota',fecha:ahora(),texto:txt});
+  if(tipo==='reply'&&p.estado==='Sin respuesta') p.estado='Seguimiento';
+  guardar();
+  var ni=document.getElementById('nota-inp');if(ni)ni.value='';
+  toast('Nota guardada ✓');
+  setTimeout(function(){verExpediente(activoId);document.getElementById('sec-mensajes').scrollIntoView({behavior:'smooth'});},100);
+}
+
+function guardarApiKey(){
+  const key=document.getElementById('apikey-input').value.trim();
+  if(!key.startsWith('sk-ant-')){document.getElementById('apikey-status').innerHTML='<span style="color:var(--red)">Debe empezar con sk-ant-...</span>';return;}
+  localStorage.setItem('mp_crm_apikey',key);
+  document.getElementById('apikey-status').innerHTML='<span style="color:var(--green)"><i class="ti ti-circle-check"></i> Guardada correctamente</span>';
+  document.getElementById('apikey-input').value='';
+  setTimeout(checkApiKey,800);
+}
+
+function checkApiKey(){
+  const key=localStorage.getItem('mp_crm_apikey');
+  const el=document.getElementById('apikey-setup');
+  if(!el||!key) return;
+  el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--green)"><i class="ti ti-circle-check"></i> API Key configurada — extractor autonomo activo</span><button class="btn btn-sm" onclick="localStorage.removeItem(\'mp_crm_apikey\');location.reload()" style="font-size:11px">Cambiar</button></div>';
+  el.style.background='var(--green-light)';el.style.borderColor='#b8e6cf';
+}
+
+function aplicarInfo(info){
+  const map={nombre:'n-nombre',giro:'n-giro',dir:'n-dir',telNeg:'n-tel-neg',resena:'n-resena',urlNeg:'n-url-neg',igNeg:'n-ig-neg',fbNeg:'n-fb-neg',dueno:'n-dueno',cargo:'n-cargo',wa:'n-wa',email:'n-email',igDue:'n-ig-due',li:'n-li',perfilDue:'n-perfil-due'};
+  let filled=0;const names=[];
+  Object.keys(map).forEach(k=>{
+    const val=info[k];
+    if(val&&val!=='null'&&String(val).trim()){
+      const el=document.getElementById(map[k]);
+      if(el){el.value=String(val).trim();filled++;names.push(k);}
+    }
+  });
+  const statusEl=document.getElementById('ext-status');
+  if(filled>0){
+    document.getElementById('ext-txt-negocio').value='';
+    document.getElementById('ext-txt-dueno').value='';
+    statusEl.innerHTML=`<div class="extract-result"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="ti ti-circle-check" style="color:var(--green);font-size:18px"></i><strong style="color:#1a6640">${filled} campos llenados automaticamente</strong></div><div style="font-size:11px;color:#1a6640">${names.join(' · ')}</div></div>`;
+    setTimeout(()=>document.getElementById('n-nombre').scrollIntoView({behavior:'smooth',block:'center'}),300);
+  }else{
+    statusEl.innerHTML='<div style="color:#8a5100;font-size:12px;padding:10px;background:var(--amber-light);border-radius:8px">La IA proceso el texto pero los valores quedaron vacios. Pega mas informacion del perfil.</div>';
+  }
+}
+
+async function extraerConIA(){
+  const txtNeg=document.getElementById('ext-txt-negocio').value.trim();
+  const txtDue=document.getElementById('ext-txt-dueno').value.trim();
+  if(!txtNeg){toast('Pega el texto del perfil del negocio primero');return;}
+  const apiKey=localStorage.getItem('mp_crm_apikey');
+  const statusEl=document.getElementById('ext-status');
+  const btn=document.getElementById('btn-extraer');
+  const prompt='Extrae datos de este perfil de negocio. Devuelve SOLO el JSON en una linea sin texto adicional.\n\nTEXTO:\n'+txtNeg+(txtDue?'\n\nREPRESENTANTE:\n'+txtDue:'')+'\n\nJSON requerido (null si no hay dato):\n{"nombre":null,"giro":null,"dir":null,"telNeg":null,"resena":null,"urlNeg":null,"igNeg":null,"fbNeg":null,"dueno":null,"cargo":null,"wa":null,"email":null,"igDue":null,"li":null,"perfilDue":null}\n\ngiro=tipo de negocio inferido. resena=1-2 oraciones. Solo el JSON.';
+
+  if(!apiKey){
+    if(typeof sendPrompt==='function'){
+      sendPrompt(prompt);
+      statusEl.innerHTML='<div style="background:var(--blue-light);border-radius:8px;padding:12px;font-size:12px;color:#0077b6"><strong><i class="ti ti-arrow-up"></i> Enviado a Claude en el chat.</strong> Cuando responda con el JSON, copialo y pegalo aqui:<textarea class="form-input" id="json-fb" placeholder=\'{"nombre":"...\' style="min-height:70px;font-size:12px;font-family:monospace;margin-top:8px"></textarea><button class="btn btn-primary btn-block" onclick="aplicarJsonFb()" style="margin-top:6px"><i class="ti ti-check"></i> Aplicar al formulario</button><div style="margin-top:10px;font-size:11px;border-top:1px solid rgba(0,119,182,.2);padding-top:8px">Para usar sin este chat: guarda tu <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#0077b6;font-weight:500">API Key</a> arriba.</div></div>';
+    }else{
+      statusEl.innerHTML='<div style="background:var(--amber-light);border-radius:8px;padding:12px;font-size:12px;color:#8a5100"><strong>Sin API Key.</strong> Obtén tu <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#0077b6;font-weight:500">API Key gratuita de Anthropic</a> y guardala arriba para extraer datos sin necesitar este chat.</div>';
+    }
+    return;
+  }
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Analizando...';statusEl.innerHTML='';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    if(!resp.ok){const e=await resp.json().catch(()=>({}));statusEl.innerHTML='<div style="color:var(--red);font-size:12px;padding:10px;background:var(--red-light);border-radius:8px">'+(resp.status===401?'API Key invalida — verifica y guardala de nuevo.':(e.error&&e.error.message)||'Error '+resp.status)+'</div>';btn.disabled=false;btn.innerHTML='<i class="ti ti-sparkles"></i> Extraer informacion con IA';return;}
+    const data=await resp.json();
+    const blk=data.content&&data.content.find(b=>b.type==='text');
+    const raw=blk?blk.text:'';
+    let info=null;
+    try{info=JSON.parse(raw);}catch(_){}
+    if(!info){try{info=JSON.parse(raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim());}catch(_){}}
+    if(!info){const m=raw.match(/\{[\s\S]*\}/);if(m)try{info=JSON.parse(m[0]);}catch(_){}}
+    if(!info){statusEl.innerHTML='<div style="color:var(--red);font-size:12px;padding:10px;background:var(--red-light);border-radius:8px">No se pudo parsear: '+raw.substring(0,100)+'</div>';btn.disabled=false;btn.innerHTML='<i class="ti ti-sparkles"></i> Extraer informacion con IA';return;}
+    aplicarInfo(info);
+  }catch(e){
+    statusEl.innerHTML='<div style="color:var(--red);font-size:12px;padding:10px;background:var(--red-light);border-radius:8px">Error: '+e.message+'</div>';
+  }
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-sparkles"></i> Extraer informacion con IA';
+}
+
+function aplicarJsonFb(){
+  const el=document.getElementById('json-fb');
+  if(!el){toast('No encontre el campo');return;}
+  const raw=el.value.trim();
+  if(!raw){toast('Pega el JSON primero');return;}
+  let info=null;
+  try{info=JSON.parse(raw);}catch(_){}
+  if(!info){const m=raw.match(/\{[\s\S]*\}/);if(m)try{info=JSON.parse(m[0]);}catch(_){}}
+  if(!info){toast('JSON invalido');return;}
+  aplicarInfo(info);
+}
+
+function guardarProspecto(){
+  const nombre=document.getElementById('n-nombre').value.trim();
+  const telNeg=document.getElementById('n-tel-neg').value.trim();
+  if(!nombre){toast('El nombre del negocio es obligatorio');return;}
+  if(!telNeg){toast('El telefono del negocio es obligatorio');return;}
+  const giro=document.getElementById('n-giro').value.trim();
+  const p={
+    id:Date.now(),nombre,giro,
+    dir:document.getElementById('n-dir').value.trim(),
+    telNeg:document.getElementById('n-tel-neg').value.trim(),
+    emailNeg:(document.getElementById('n-email-neg')?document.getElementById('n-email-neg').value.trim():''),
+    resena:document.getElementById('n-resena').value.trim(),
+    urlNeg:document.getElementById('n-url-neg').value.trim(),
+    igNeg:document.getElementById('n-ig-neg').value.trim(),
+    fbNeg:document.getElementById('n-fb-neg').value.trim(),
+    dueno:document.getElementById('n-dueno').value.trim(),
+    cargo:document.getElementById('n-cargo').value.trim(),
+    wa:document.getElementById('n-wa').value.trim(),
+    email:document.getElementById('n-email').value.trim(),
+    igDue:document.getElementById('n-ig-due').value.trim(),
+    li:document.getElementById('n-li').value.trim(),
+    perfilDue:document.getElementById('n-perfil-due').value.trim(),
+    facturacion:document.getElementById('n-facturacion').value,
+    canal:document.getElementById('n-canal').value,
+    contexto:document.getElementById('n-contexto').value.trim(),
+    estado:'Primer contacto',
+    historial:[{tipo:'info',fecha:ahora(),texto:'Expediente creado'}],
+    creado:hoy()
+  };
+  prospectos.unshift(p);guardar();
+  limpiarForm();toast('Prospecto guardado');showScreen('lista');
+}
+
+function limpiarForm(){
+  ['n-nombre','n-giro','n-dir','n-tel-neg','n-email-neg','n-resena','n-url-neg','n-ig-neg','n-fb-neg','n-dueno','n-cargo','n-wa','n-email','n-ig-due','n-li','n-perfil-due','n-contexto','ext-txt-negocio','ext-txt-dueno'].filter(function(id){return document.getElementById(id)!==null;}).forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('n-facturacion').value='';
+  document.getElementById('n-canal').value='WhatsApp';
+  document.getElementById('ext-status').innerHTML='';
+  document.getElementById('btn-guardar').onclick=guardarProspecto;
+}
+
+function editarProspecto(id){
+  var p=prospectos.find(function(x){return x.id===id;});
+  if(!p) return;
+  var ex=document.getElementById('edit-modal');
+  if(ex) ex.remove();
+  var modal=document.createElement('div');
+  modal.id='edit-modal';
+  modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:500;overflow-y:auto;padding:16px;box-sizing:border-box';
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:16px;max-width:640px;margin:0 auto;padding:20px;margin-bottom:20px';
+  function inp(fid,lbl,val,full){
+    return '<div style="'+(full?'grid-column:span 2;':'')+'margin-bottom:2px">'+
+      '<label style="font-size:12px;font-weight:500;color:#666;display:block;margin-bottom:4px">'+lbl+'</label>'+
+      '<input id="'+fid+'" value="'+(val||'').replace(/"/g,'&quot;')+'" style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #ddd;border-radius:8px;font-family:inherit;outline:none;box-sizing:border-box"></div>';
+  }
+  function ta(fid,lbl,val){
+    return '<div style="grid-column:span 2;margin-bottom:2px">'+
+      '<label style="font-size:12px;font-weight:500;color:#666;display:block;margin-bottom:4px">'+lbl+'</label>'+
+      '<textarea id="'+fid+'" style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #ddd;border-radius:8px;font-family:inherit;min-height:64px;resize:vertical;outline:none;box-sizing:border-box">'+(val||'')+'</textarea></div>';
+  }
+  var facOpts={'':'Seleccionar...','5k-15k':'$5k-$15k','15k-60k':'$15k-$60k','60k+':'+$60k'};
+  var canalOpts=['WhatsApp','Visita presencial','Llamada','Instagram','Email'];
+  box.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">'+
+      '<div style="font-size:16px;font-weight:700;color:#1a1a18">Editar expediente</div>'+
+      '<button onclick="document.getElementById('edit-modal').remove()" style="background:none;border:none;font-size:26px;cursor:pointer;color:#999;padding:0;line-height:1">×</button>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+      inp('ef-nombre','Nombre del negocio *',p.nombre)+
+      inp('ef-giro','Giro / Tipo',p.giro)+
+      inp('ef-tel','Telefono *',p.telNeg)+
+      inp('ef-emailneg','Email negocio',p.emailNeg)+
+      inp('ef-dir','Direccion',p.dir,true)+
+      inp('ef-dueno','Dueno / Contacto',p.dueno)+
+      inp('ef-cargo','Cargo',p.cargo)+
+      inp('ef-wa','WhatsApp',p.wa)+
+      inp('ef-email','Email dueno',p.email)+
+      inp('ef-igneg','Instagram negocio',p.igNeg)+
+      inp('ef-igdue','Instagram dueno',p.igDue)+
+      '<div><label style="font-size:12px;font-weight:500;color:#666;display:block;margin-bottom:4px">Facturacion</label>'+
+        '<select id="ef-fac" style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #ddd;border-radius:8px;font-family:inherit">'+
+        Object.keys(facOpts).map(function(o){return '<option value="'+o+'"'+(p.facturacion===o?' selected':'')+'>'+facOpts[o]+'</option>';}).join('')+
+        '</select></div>'+
+      '<div><label style="font-size:12px;font-weight:500;color:#666;display:block;margin-bottom:4px">Canal</label>'+
+        '<select id="ef-canal" style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #ddd;border-radius:8px;font-family:inherit">'+
+        canalOpts.map(function(o){return '<option value="'+o+'"'+(p.canal===o?' selected':'')+'>'+o+'</option>';}).join('')+
+        '</select></div>'+
+      ta('ef-contexto','Contexto de venta',p.contexto)+
+      ta('ef-resena','Resena del negocio',p.resena)+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px">'+
+      '<button onclick="document.getElementById('edit-modal').remove()" style="padding:12px;background:#f7f7f5;color:#1a1a18;border:1px solid #ddd;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Cancelar</button>'+
+      '<button onclick="guardarEdicion('+id+')" style="padding:12px;background:#009ee3;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Guardar cambios</button>'+
+    '</div>';
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+  modal.addEventListener('click',function(ev){if(ev.target===modal)modal.remove();});
+}
+
+function guardarEdicion(id){
+  var p=prospectos.find(function(x){return x.id===id;});
+  if(!p) return;
+  var nombre=document.getElementById('ef-nombre').value.trim();
+  var tel=document.getElementById('ef-tel').value.trim();
+  if(!nombre){toast('El nombre es obligatorio');return;}
+  if(!tel){toast('El telefono es obligatorio');return;}
+  p.nombre=nombre;
+  p.giro=document.getElementById('ef-giro').value.trim();
+  p.telNeg=tel;
+  p.emailNeg=document.getElementById('ef-emailneg').value.trim();
+  p.dir=document.getElementById('ef-dir').value.trim();
+  p.dueno=document.getElementById('ef-dueno').value.trim();
+  p.cargo=document.getElementById('ef-cargo').value.trim();
+  p.wa=document.getElementById('ef-wa').value.trim();
+  p.email=document.getElementById('ef-email').value.trim();
+  p.igNeg=document.getElementById('ef-igneg').value.trim();
+  p.igDue=document.getElementById('ef-igdue').value.trim();
+  p.contexto=document.getElementById('ef-contexto').value.trim();
+  p.resena=document.getElementById('ef-resena').value.trim();
+  p.facturacion=document.getElementById('ef-fac').value;
+  p.canal=document.getElementById('ef-canal').value;
+  guardar();
+  document.getElementById('edit-modal').remove();
+  toast('Expediente actualizado ✓');
+  verExpediente(id);
+}
+function eliminarProspecto(id){
+  if(!confirm('Eliminar este prospecto?')) return;
+  prospectos=prospectos.filter(x=>x.id!==id);
+  guardar();toast('Prospecto eliminado');showScreen('lista');
+}
+
+function renderResumen(){
+  const total=prospectos.length;
+  const tpv=prospectos.filter(p=>p.facturacion==='60k+').length;
+  const done=prospectos.filter(p=>p.estado==='Cerrado').length;
+  const por={};prospectos.forEach(p=>{por[p.estado]=(por[p.estado]||0)+1;});
+  let html=`<div class="exp-section"><div class="exp-section-title"><i class="ti ti-chart-bar"></i> Resumen del pipeline</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:4px"><div class="stat-pill"><div class="stat-pill-n">${total}</div><div class="stat-pill-l">Total prospectos</div></div><div class="stat-pill"><div class="stat-pill-n">${tpv}</div><div class="stat-pill-l">TPV +$60k</div></div><div class="stat-pill"><div class="stat-pill-n">${por['Caliente']||0}</div><div class="stat-pill-l">Calientes</div></div><div class="stat-pill"><div class="stat-pill-n">${done}</div><div class="stat-pill-l">Cerrados</div></div></div></div>`;
+  html+=`<div class="exp-section"><div class="exp-section-title"><i class="ti ti-progress"></i> Por estado</div>`;
+  ESTADOS.forEach(e=>{const n=por[e]||0;html+=`<div class="pipeline-stage">${badge(e)}<span style="font-weight:600">${n}</span></div>`;});
+  html+=`</div><div class="exp-section"><div class="exp-section-title"><i class="ti ti-credit-card"></i> Por facturacion</div>`;
+  [['5k-15k','Minimo KPI $5k-$15k'],['15k-60k','Potencial $15k-$60k'],['60k+','Alto valor +$60k (TPV)']].forEach(([k,l])=>{
+    const n=prospectos.filter(p=>p.facturacion===k).length;
+    html+=`<div class="pipeline-stage"><span style="font-size:13px">${l}</span><span style="font-weight:600">${n}</span></div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('resumen-container').innerHTML=html;
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+
+function exportarDatos(){
+  var data=localStorage.getItem(DB)||'[]';
+  var prosp=JSON.parse(data);
+  var fecha=new Date().toISOString().split('T')[0];
+  var blob=new Blob([data],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='CRM_MercadoPago_'+fecha+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Respaldo descargado ('+prosp.length+' prospectos)');
+}
+
+function importarDatos(){
+  var input=document.createElement('input');
+  input.type='file';
+  input.accept='.json';
+  input.onchange=function(e){
+    var file=e.target.files[0];
+    if(!file) return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        var data=JSON.parse(ev.target.result);
+        if(!Array.isArray(data)) throw new Error('Formato invalido');
+        // Merge: add imported prospects that don't exist (by id)
+        var existing=prospectos.map(function(p){return p.id;});
+        var nuevos=data.filter(function(p){return existing.indexOf(p.id)===-1;});
+        var actualizados=0;
+        data.forEach(function(imp){
+          var idx=prospectos.findIndex(function(p){return p.id===imp.id;});
+          if(idx>-1){prospectos[idx]=imp;actualizados++;}
+        });
+        prospectos=prospectos.concat(nuevos);
+        guardar();
+        renderLista();renderStats();
+        showScreen('lista');
+        toast(nuevos.length+' nuevos + '+actualizados+' actualizados importados');
+        cerrarBackupPanel();
+      }catch(err){
+        toast('Error al leer el archivo: '+err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function mostrarBackupPanel(){
+  var panel=document.getElementById('backup-panel');
+  if(panel){panel.style.display=panel.style.display==='none'?'flex':'none';return;}
+  // Create panel
+  var el=document.createElement('div');
+  el.id='backup-panel';
+  el.style.cssText='position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #e0e0db;border-radius:16px;padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.15);z-index:200;display:flex;flex-direction:column;gap:12px;width:320px;max-width:calc(100vw - 32px)';
+  el.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'+
+      '<div style="font-size:15px;font-weight:700;color:#1a1a18">Respaldo de datos</div>'+
+      '<button onclick="cerrarBackupPanel()" style="background:none;border:none;cursor:pointer;font-size:20px;color:#999;padding:0;line-height:1">×</button>'+
+    '</div>'+
+    '<p style="font-size:12px;color:#666;line-height:1.5;margin:0">Exporta tus prospectos para hacer un respaldo o transferirlos a otro navegador/dispositivo.</p>'+
+    '<button onclick="exportarDatos()" style="padding:13px;background:#009ee3;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">'+
+      '<i class="ti ti-download" style="font-size:18px"></i> Exportar prospectos (.json)'+
+    '</button>'+
+    '<button onclick="importarDatos()" style="padding:13px;background:#f7f7f5;color:#1a1a18;border:1.5px solid #e0e0db;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">'+
+      '<i class="ti ti-upload" style="font-size:18px"></i> Importar prospectos (.json)'+
+    '</button>'+
+    '<p style="font-size:11px;color:#999;text-align:center;margin:0">Al importar se combinan con los actuales sin borrar nada</p>';
+  document.body.appendChild(el);
+  // Close on outside click
+  setTimeout(function(){
+    document.addEventListener('click', function handler(ev){
+      if(!el.contains(ev.target)&&!ev.target.closest('#btn-backup')){
+        cerrarBackupPanel();
+        document.removeEventListener('click',handler);
+      }
+    });
+  },200);
+}
+
+function cerrarBackupPanel(){
+  var panel=document.getElementById('backup-panel');
+  if(panel) panel.remove();
+}
+
+cargar();renderStats();renderLista();checkApiKey();
+
+
+// ============================================================
+// FLUJO DE CONVERSACIÓN INTERACTIVO
+// ============================================================
+
+const FLUJO = {
+  preguntas: [
+    {
+      id: 'q1',
+      texto: '¿Ya cuentas con alguna terminal de pago actualmente?',
+      opciones: [
+        { id: 'q1_si',   label: 'Sí, tengo terminal',       emoji: '✅' },
+        { id: 'q1_no',   label: 'No, solo efectivo',         emoji: '💵' },
+        { id: 'q1_duda', label: 'Tenía pero la dejé de usar', emoji: '🤔' }
+      ]
+    },
+    {
+      id: 'q2',
+      texto: '¿Cuál es su mayor dolor con los pagos hoy?',
+      opciones: [
+        { id: 'q2_espera',   label: 'Tarda días en llegar el dinero',    emoji: '⏳' },
+        { id: 'q2_costo',    label: 'Las comisiones o rentas son altas',  emoji: '💸' },
+        { id: 'q2_cobertura',label: 'No puedo cobrar en todos lados',     emoji: '📶' },
+        { id: 'q2_ninguno',  label: 'Por ahora no veo problema',          emoji: '😐' }
+      ]
+    },
+    {
+      id: 'q3',
+      texto: '¿Qué tan abierto está a conocer más sobre la terminal?',
+      opciones: [
+        { id: 'q3_listo',   label: 'Me interesa, cuéntame más',     emoji: '🔥' },
+        { id: 'q3_info',    label: 'Mándame información primero',    emoji: '📋' },
+        { id: 'q3_precio',  label: 'Depende del precio y comisión',  emoji: '💰' },
+        { id: 'q3_no',      label: 'Por el momento no, gracias',     emoji: '🚫' }
+      ]
+    }
+  ],
+
+  respuestas: {
+    // Q1 responses
+    q1_si: {
+      msg: `Qué bien, muchos negocios ya tienen terminal pero al comparar los beneficios nos dicen que no sabían que podían tener tanto más 😊
+
+Por eso te contacto — hay diferencias importantes entre terminales que pueden estar costándote dinero o tiempo sin que te des cuenta.
+
+¿Me permites hacerte solo 2 preguntas rápidas para mostrarte en qué podría mejorar lo que ya tienes?`,
+      nota: `💡 Nota para Janet: Enfócate en diferenciadores vs su terminal actual. Pregunta qué terminal usa (Clip, banco, Getnet…) para personalizar el siguiente mensaje con ventajas específicas.`
+    },
+    q1_no: {
+      msg: `Entonces imagínate esto: tus clientes llegan listos para pagar con tarjeta y tú tienes que decirles "solo efectivo" 😬 Eso es dinero que literalmente se va caminando.
+
+La buena noticia es que activar la Point Smart 2 de Mercado Pago es más sencillo y económico de lo que imaginas — y sin costos fijos mensuales.
+
+¿Te gustaría que te explique cómo funciona en 2 minutos?`,
+      nota: `💡 Nota para Janet: Prospecto sin terminal = oportunidad de primera vez. El argumento más fuerte es el costo CERO de arrancar (sin renta, sin mensualidad). Tiene chip 4G y papel incluidos. Solo paga comisión cuando vende.`
+    },
+    q1_duda: {
+      msg: `Entiendo perfectamente — muchas terminales generan más problemas que soluciones: cobros que no llegan a tiempo, rentas aunque no vendas, soporte que no responde... 😤
+
+Por eso Mercado Pago diseñó la Point Smart 2 de forma diferente: sin costos fijos, con el dinero disponible al instante y conectividad 4G propia incluida.
+
+¿Qué fue lo que no te convenció de la que tenías antes? Así te cuento exactamente en qué cambia esto.`,
+      nota: `💡 Nota para Janet: Este es tu mejor prospecto — ya tuvo mala experiencia con la competencia. Escucha qué le falló (renta, velocidad de depósito, soporte) y ataca directo ese punto con el diferenciador correcto.`
+    },
+
+    // Q2 responses
+    q2_espera: {
+      msg: `Ese es exactamente el dolor más común que escucho — cobras el viernes y el dinero llega el martes 😓 Mientras tanto tienes que esperar para pagarle a proveedores o hacer compras.
+
+Con la Point Smart 2 de Mercado Pago el dinero entra a tu cuenta al instante, incluyendo fines de semana y días festivos. Sin excepciones.
+
+¿Te imagina lo que cambiaría tener ese flujo de caja disponible desde el primer minuto?`,
+      nota: `💡 Nota para Janet: DIFERENCIADOR 1 activado. Refuerza con ejemplo real: "Si cobras $10,000 el sábado, el lunes ya tienes ese dinero disponible. Con un banco o Clip, eso llega hasta el miércoles o jueves hábil."`
+    },
+    q2_costo: {
+      msg: `Totalmente válido — eso es algo que vemos mucho. Las terminales bancarias cobran renta aunque no vendas, y algunas comisiones esconden costos de papel, internet o "mantenimiento" 😤
+
+Con la Point Smart 2 no hay renta mensual, el papel se repone gratis de por vida y el chip 4G ilimitado va incluido. Solo pagas una comisión cuando vendes, y baja según tu volumen.
+
+¿Quieres que hagamos un comparativo rápido con lo que pagas hoy?`,
+      nota: `💡 Nota para Janet: DIFERENCIADOR 2 activado. Si puedes, pregunta cuánto paga de renta actualmente para hacer el comparativo en vivo. El argumento "solo pagas cuando vendes" es muy poderoso.`
+    },
+    q2_cobertura: {
+      msg: `¡Eso tiene solución! La Point Smart 2 trae su propio chip 4G ilimitado — no depende de tu WiFi ni de que le prestemos señal del celular 📶
+
+Puedes cobrar en eventos, en la calle, en entregas a domicilio, donde sea. Sin interrupciones.
+
+¿Actualmente cómo resuelves los cobros cuando no tienes buena señal?`,
+      nota: `💡 Nota para Janet: DIFERENCIADOR 2 (conectividad). Muy útil para negocios móviles, food trucks, servicios a domicilio o negocios en zonas con WiFi inestable. Menciona que no hay costo adicional por el chip.`
+    },
+    q2_ninguno: {
+      msg: `Qué bueno que los pagos no son un dolor hoy 👍 Eso me dice que tienes buen control del negocio.
+
+Mi pregunta es diferente entonces: ¿estás aprovechando todo lo que tu dinero puede hacer mientras descansa en tu cuenta?
+
+Te cuento porque la Point Smart 2 no es solo para cobrar — el saldo genera rendimientos automáticos diarios y tienes acceso a créditos para crecer. Eso sí es diferente a todo lo que existe hoy.`,
+      nota: `💡 Nota para Janet: Cuando no hay dolor obvio, cambia el enfoque a OPORTUNIDAD. DIFERENCIADOR 3 (ecosistema financiero): rendimientos diarios y créditos. El gancho es "tu dinero trabajando solo".`
+    },
+
+    // Q3 responses
+    q3_listo: {
+      msg: `¡Excelente, con gusto! 🙌
+
+La Point Smart 2 vale $649 pesos (pago único, sin mensualidades). Acepta todas las tarjetas, vales, QR, Mastercard, AMEX, Banco del Bienestar... absolutamente todo.
+
+El dinero entra al instante, el chip 4G y el papel van incluidos de por vida, y formas parte de todo el ecosistema Mercado Libre: créditos, rendimientos, punto de venta y más.
+
+¿Cuándo podemos tener una llamada de 10 minutos o me das chance de pasar al negocio para mostrarte la terminal en mano?`,
+      nota: `💡 Nota para Janet: ¡CIERRE! No sobre-expliques. Propón una acción concreta: visita presencial o llamada. Lleva la terminal para demostración si es posible — ver y tocar la terminal acelera el cierre.`
+    },
+    q3_info: {
+      msg: `Claro, con todo gusto te comparto 📋
+
+➡️ Point Smart 2 — $649 pago único
+✅ Sin renta mensual ni costos fijos
+⚡ Dinero disponible al instante (fines de semana incluidos)
+📶 Chip 4G ilimitado incluido de por vida
+🧻 Rollos de papel gratis de por vida
+💳 Acepta todo: tarjetas, QR, vales, AMEX, Banco del Bienestar
+📈 Rendimientos diarios sobre tu saldo + acceso a créditos
+
+¿Hay algún punto en específico sobre el que te gustaría más detalle?`,
+      nota: `💡 Nota para Janet: Dale la info limpia y visual (ya la tienes arriba). No satures. Termina con una pregunta abierta para identificar qué le importa más y personalizar el siguiente mensaje de cierre.`
+    },
+    q3_precio: {
+      msg: `Totalmente entendible, el precio y la comisión son lo primero que hay que tener claro 💰
+
+La terminal vale $649 pago único — sin mensualidades ni contratos. La comisión varía según tu volumen de ventas mensual y puede bajar significativamente conforme vendes más.
+
+Para darte el número exacto, necesito saber: ¿aproximadamente cuánto vendes en tarjeta al mes? Con eso te hago el comparativo real con lo que tienes hoy.`,
+      nota: `💡 Nota para Janet: No des la comisión genérica — pregunta el volumen para dar la tasa por escala correcta. Esto también te ayuda a calificar el prospecto para tu KPI. Si factura +$60k menciona que la comisión puede ser muy competitiva.`
+    },
+    q3_no: {
+      msg: `Sin problema, lo entiendo perfectamente 🙏
+
+Solo te dejo una última cosa antes de cerrar: si en algún momento tu situación cambia o algún cliente te pide pagar con tarjeta y no tienes cómo, aquí estoy para resolverlo sin complicaciones.
+
+¿Puedo quedarme guardado en tus contactos por si en algún momento te late explorar la opción?`,
+      nota: `💡 Nota para Janet: No insistas. El objetivo aquí es quedar bien posicionada para un futuro reenganche. Guarda el número, agrega una nota en el CRM y programa un seguimiento en 30-45 días. Los "no" de hoy a veces son los cierres de mañana.`
+    }
+  }
+};
+
+function renderFlujo(p){
+  const secId='sec-flujo';
+  return '<div class="exp-section" id="'+secId+'">'+
+    '<div class="exp-section-title"><i class="ti ti-messages"></i> Asistente de conversación WhatsApp</div>'+
+    '<div style="font-size:12px;color:var(--text-2);margin-bottom:14px;line-height:1.5">'+
+      'Selecciona la respuesta que dio el cliente y te doy el siguiente mensaje listo para copiar + notas de apoyo.'+
+    '</div>'+
+    '<div id="flujo-contenido">'+renderPregunta(0, p)+'</div>'+
+  '</div>';
+}
+
+function renderPregunta(idx, p){
+  if(idx >= FLUJO.preguntas.length) return '';
+  const q = FLUJO.preguntas[idx];
+  return '<div style="margin-bottom:16px">'+
+    '<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;padding:10px 12px;background:var(--blue-light);border-radius:10px;border-left:3px solid var(--blue)">'+
+      '<span style="font-size:11px;color:var(--blue);display:block;margin-bottom:3px;font-weight:500">PREGUNTA '+(idx+1)+' — envíala al cliente</span>'+
+      q.texto+
+      '<button onclick="navigator.clipboard.writeText(\''+q.texto+'\')" style="display:block;margin-top:6px;padding:4px 10px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit">'+
+        '<i class="ti ti-copy"></i> Copiar pregunta</button>'+
+    '</div>'+
+    '<div style="font-size:12px;color:var(--text-3);margin-bottom:8px">¿Qué respondió el cliente?</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
+      q.opciones.map(function(op){
+        return '<button onclick="mostrarRespuesta(\''+op.id+'\','+idx+',event)" style="padding:10px 12px;border:1px solid var(--gray-3);border-radius:10px;background:var(--white);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;transition:.15s" onmouseover="this.style.borderColor=\'var(--blue)\';this.style.background=\'var(--blue-light)\'" onmouseout="this.style.borderColor=\'var(--gray-3)\';this.style.background=\'var(--white)\'">'+
+          '<span style="font-size:16px;display:block;margin-bottom:4px">'+op.emoji+'</span>'+
+          op.label+
+        '</button>';
+      }).join('')+
+    '</div>'+
+  '</div>';
+}
+
+function mostrarRespuesta(opId, qIdx, event){
+  // Highlight selected button
+  const parent = event.target.closest('div[style*="grid"]');
+  if(parent) parent.querySelectorAll('button').forEach(function(b){
+    b.style.borderColor='var(--gray-3)';b.style.background='var(--white)';
+  });
+  event.target.closest('button').style.borderColor='var(--blue)';
+  event.target.closest('button').style.background='var(--blue-light)';
+
+  const r = FLUJO.respuestas[opId];
+  if(!r) return;
+
+  // Remove previous response if any
+  const prev = document.getElementById('flujo-resp-'+qIdx);
+  if(prev) prev.remove();
+
+  // Remove next questions
+  for(let i=qIdx+1; i<FLUJO.preguntas.length+1; i++){
+    const el=document.getElementById('flujo-q-'+i);
+    if(el) el.remove();
+  }
+
+  const div = document.createElement('div');
+  div.id = 'flujo-resp-'+qIdx;
+  div.style.cssText = 'margin-top:12px;margin-bottom:16px';
+  div.innerHTML =
+    '<div style="background:var(--green-light);border:1px solid #b8e6cf;border-radius:10px;padding:14px;margin-bottom:10px">'+
+      '<div style="font-size:11px;font-weight:600;color:#1a6640;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">'+
+        '<span><i class="ti ti-message-check"></i> MENSAJE LISTO PARA ENVIAR</span>'+
+        '<button onclick="copiarTexto(\'msg-txt-'+opId+'\')" style="padding:4px 10px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit"><i class="ti ti-copy"></i> Copiar</button>'+
+      '</div>'+
+      '<div id="msg-txt-'+opId+'" style="font-size:13px;color:var(--text);line-height:1.7;white-space:pre-wrap">'+r.msg+'</div>'+
+    '</div>'+
+    '<div style="background:var(--amber-light);border:1px solid #f5c97a;border-radius:10px;padding:12px">'+
+      '<div style="font-size:11px;font-weight:600;color:#8a5100;margin-bottom:6px"><i class="ti ti-brain"></i> NOTAS DE APOYO PARA JANET</div>'+
+      '<div style="font-size:12px;color:#8a5100;line-height:1.6">'+r.nota+'</div>'+
+    '</div>';
+
+  event.target.closest('div[style*="grid"]').parentNode.appendChild(div);
+
+  // Show next question if exists
+  if(qIdx+1 < FLUJO.preguntas.length){
+    const nextDiv = document.createElement('div');
+    nextDiv.id = 'flujo-q-'+(qIdx+1);
+    nextDiv.innerHTML = renderPregunta(qIdx+1, null);
+    event.target.closest('div[style*="grid"]').parentNode.appendChild(nextDiv);
+  }
+
+  // Scroll to response
+  setTimeout(function(){ div.scrollIntoView({behavior:'smooth',block:'start'}); }, 100);
+}
+
+function copiarTexto(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent).then(function(){ toast('Mensaje copiado'); });
+}
+
+</script>
+</body>
+</html>
