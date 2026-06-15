@@ -285,10 +285,69 @@ function ahora(){return new Date().toISOString().substring(0,16);}
 function badge(e){return `<span class="badge ${BCLS[e]||'badge-cold'}">${e}</span>`;}
 function fval(id){const el=document.getElementById(id);return el?el.value.trim():'';}
 
+
+// ── Auto-migrator: converts old format data to new format ──────────────────
+function migrarDatosAntiguos(){
+  const claves=['mp_crm_v5','mp_crm_v4','mp_crm_v3','mp_crm_v2','mp_crm_v1'];
+  for(const clave of claves){
+    try{
+      const raw=localStorage.getItem(clave);
+      if(!raw) continue;
+      const datos=JSON.parse(raw);
+      if(!datos||!datos.length) continue;
+      // Check if already migrated
+      const v6=localStorage.getItem(DB);
+      const v6data=v6?JSON.parse(v6):[];
+      const existingIds=v6data.map(function(p){return p.id;});
+      const nuevos=datos.filter(function(p){return !existingIds.includes(p.id);}).map(function(p){
+        return {
+          id:p.id||Date.now(),
+          nombre:p.nombre||'',
+          giro:p.giro||'',
+          tel:p.tel||p.telNeg||'',
+          emailneg:p.emailneg||p.emailNeg||'',
+          dir:p.dir||'',
+          igneg:p.igneg||p.igNeg||'',
+          fbneg:p.fbneg||p.fbNeg||'',
+          resena:p.resena||'',
+          dueno:p.dueno||'',
+          cargo:p.cargo||'',
+          wa:p.wa||'',
+          email:p.email||'',
+          igdue:p.igdue||p.igDue||'',
+          li:p.li||'',
+          perfil:p.perfil||p.perfilDue||'',
+          fac:p.fac||p.facturacion||'',
+          canal:p.canal||'WhatsApp',
+          contexto:p.contexto||'',
+          estado:p.estado||'Primer contacto',
+          historial:p.historial||[],
+          creado:p.creado||hoy()
+        };
+      });
+      if(nuevos.length>0){
+        const merged=[...nuevos,...v6data];
+        localStorage.setItem(DB,JSON.stringify(merged));
+        console.log('Migrados '+nuevos.length+' prospectos de '+clave);
+        // Upload to Firebase
+        if(window.fbSave) nuevos.forEach(function(p){window.fbSave(p);});
+        return merged;
+      }
+    }catch(err){console.warn('Error migrando '+clave,err);}
+  }
+  return null;
+}
+
 function cargar(){
+  // Run migrator first — converts old format data
+  migrarDatosAntiguos();
   // Load from localStorage immediately (fast)
   try{prospectos=JSON.parse(localStorage.getItem(DB)||'[]');}catch(e){prospectos=[];}
-  if(!prospectos.length) prospectos = demo();
+  // Only use demo if truly no data anywhere
+  const anyOldData=['mp_crm_v5','mp_crm_v4','mp_crm_v3'].some(function(k){
+    try{const d=JSON.parse(localStorage.getItem(k)||'[]');return d.length>0;}catch(e){return false;}
+  });
+  if(!prospectos.length&&!anyOldData) prospectos = demo();
 
   // Then load from Firebase and merge (handles multi-device sync)
   function loadFromFirebase(){
