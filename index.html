@@ -94,13 +94,69 @@ textarea.form-input{resize:vertical;min-height:80px}
 @media(max-width:480px){.form-grid{grid-template-columns:1fr}.form-full{grid-column:span 1}.stats-row{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:600px){.msg-types{grid-template-columns:repeat(4,1fr)}}
 </style>
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, setDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB9eAaDYBARj4z-1cpZv0CWXstDvS_7P-s",
+    authDomain: "crm-mercadopago.firebaseapp.com",
+    projectId: "crm-mercadopago",
+    storageBucket: "crm-mercadopago.firebasestorage.app",
+    messagingSenderId: "860949367928",
+    appId: "1:860949367928:web:a2b0948b1809263d57318d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const COL = 'prospectos';
+
+  // Expose Firebase functions to global scope
+  window.fbSave = async function(p){
+    try{
+      await setDoc(doc(db, COL, String(p.id)), p);
+    }catch(e){ console.warn('Firebase save error:', e); }
+  };
+
+  window.fbDelete = async function(id){
+    try{
+      await deleteDoc(doc(db, COL, String(id)));
+    }catch(e){ console.warn('Firebase delete error:', e); }
+  };
+
+  window.fbLoad = async function(){
+    try{
+      const snap = await getDocs(collection(db, COL));
+      const data = [];
+      snap.forEach(d => data.push(d.data()));
+      return data;
+    }catch(e){ console.warn('Firebase load error:', e); return null; }
+  };
+
+  // Real-time listener — syncs across devices automatically
+  window.fbListen = function(callback){
+    return onSnapshot(collection(db, COL), snap => {
+      const data = [];
+      snap.forEach(d => data.push(d.data()));
+      callback(data);
+    }, err => console.warn('Firebase listener error:', err));
+  };
+
+  // Signal that Firebase is ready
+  window._firebaseReady = true;
+  document.dispatchEvent(new Event('firebase-ready'));
+  console.log('Firebase connected ✓');
+  const st = document.getElementById('firebase-status');
+  if(st) st.textContent = '● Conectado';
+</script>
 </head>
 <body>
 
 <div class="header">
   <div class="header-brand">
     <div class="logo"><svg viewBox="0 0 18 14"><path d="M1 13l4-8 4 4 4-6 4 7"/></svg></div>
-    <div><div class="header-title">CRM Smart Point 2</div><div class="header-sub">Mercado Pago · Adquisicion</div></div>
+    <div><div class="header-title">CRM Smart Point 2</div><div class="header-sub">Mercado Pago · Adquisicion <span id="firebase-status" style="color:#00a650;font-size:10px"></span></div></div>
   </div>
   <div style="display:flex;gap:8px">
     <button class="btn btn-sm" onclick="mostrarBackup()" title="Respaldo"><i class="ti ti-database-export" style="font-size:16px"></i></button>
@@ -230,10 +286,73 @@ function badge(e){return `<span class="badge ${BCLS[e]||'badge-cold'}">${e}</spa
 function fval(id){const el=document.getElementById(id);return el?el.value.trim():'';}
 
 function cargar(){
+  // Load from localStorage immediately (fast)
   try{prospectos=JSON.parse(localStorage.getItem(DB)||'[]');}catch(e){prospectos=[];}
   if(!prospectos.length) prospectos = demo();
+
+  // Then load from Firebase and merge (handles multi-device sync)
+  function loadFromFirebase(){
+    if(window.fbLoad){
+      window.fbLoad().then(data => {
+        if(data && data.length > 0){
+          // Merge: Firebase is the source of truth
+          const localIds = prospectos.map(p=>p.id);
+          // Add any from Firebase not in local
+          data.forEach(fp => {
+            const idx = prospectos.findIndex(p=>p.id===fp.id);
+            if(idx > -1) prospectos[idx] = fp; // update existing
+            else prospectos.push(fp); // add new from Firebase
+          });
+          // Sort by creation date desc
+          prospectos.sort((a,b)=>new Date(b.creado)-new Date(a.creado));
+          localStorage.setItem(DB, JSON.stringify(prospectos));
+          renderLista();
+          renderStats();
+          showSyncBadge('Sincronizado con Firebase ✓');
+        }
+        // Start real-time listener
+        window.fbListen(data => {
+          if(!data.length) return;
+          prospectos = data.sort((a,b)=>new Date(b.creado)-new Date(a.creado));
+          localStorage.setItem(DB, JSON.stringify(prospectos));
+          renderLista();
+          renderStats();
+        });
+      });
+    }
+  }
+
+  if(window._firebaseReady){
+    loadFromFirebase();
+  } else {
+    document.addEventListener('firebase-ready', loadFromFirebase, {once:true});
+  }
 }
-function guardar(){localStorage.setItem(DB,JSON.stringify(prospectos));}
+
+function showSyncBadge(msg){
+  let badge = document.getElementById('sync-badge');
+  if(!badge){
+    badge = document.createElement('div');
+    badge.id = 'sync-badge';
+    badge.style.cssText = 'position:fixed;top:60px;right:12px;background:#00a650;color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;z-index:300;transition:opacity .5s';
+    document.body.appendChild(badge);
+  }
+  badge.textContent = msg;
+  badge.style.opacity = '1';
+  setTimeout(()=>badge.style.opacity='0', 3000);
+}
+function guardar(){
+  localStorage.setItem(DB,JSON.stringify(prospectos));
+  // Sync all to Firebase
+  if(window.fbSave){
+    prospectos.forEach(p => window.fbSave(p));
+  }
+}
+
+function guardarUno(p){
+  localStorage.setItem(DB,JSON.stringify(prospectos));
+  if(window.fbSave) window.fbSave(p);
+}
 function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
@@ -630,7 +749,7 @@ function guardarProspecto(){
     estado:'Primer contacto', historial:[], creado:hoy()
   };
   prospectos.unshift(p);
-  guardar();
+  guardarUno(p);
   limpiarForm();
   toast('Prospecto guardado ✓');
   showScreen('lista');
@@ -734,7 +853,9 @@ function guardarEdicion(id){
 function eliminarProspecto(id){
   if(!confirm('¿Eliminar este prospecto?')) return;
   prospectos=prospectos.filter(x=>x.id!==id);
-  guardar();toast('Prospecto eliminado');showScreen('lista');
+  localStorage.setItem(DB,JSON.stringify(prospectos));
+  if(window.fbDelete) window.fbDelete(id);
+  toast('Prospecto eliminado');showScreen('lista');
 }
 
 function exportarDatos(){
